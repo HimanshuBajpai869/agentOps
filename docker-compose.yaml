@@ -1,0 +1,11 @@
+services:
+  postgres:
+    image: postgres:16
+
+    environment:
+      POSTGRES_USER: agentOps
+      POSTGRES_PASSWORD: agentOps
+      POSTGRES_DB: agentOps
+
+    ports:
+      - "5432:5432"
