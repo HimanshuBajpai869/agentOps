@@ -33,7 +33,10 @@ Each team rebuilds this pipeline independently, leading to duplication, drift, a
 - Agent Registry
 ~~~
 POST /agents – Register a new agent
+POST /{agent_id}/activate/{version_id} - Activate a Agent Version
+POST /{agent_id}/run - Send a prompt to the activated agent for a response.
 GET /agents – List agents
+GET /{agent_id}/runs - History of all the runs for the agent.
 ~~~
 
 - Agent Versioning
