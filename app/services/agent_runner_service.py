@@ -1,17 +1,20 @@
 from app.models.agent_run import AgentRun
+from app.llm.registry import LLMRegistry
+from app.llm.builder import PromptBuilder
 
 
 class AgentRunner:
     @staticmethod
-    def run(db, agent, version):
+    def run(db, agent, version, input_text, model_name):
 
-        result = AgentRunner.prompt_agent(agent, version)
+        result = AgentRunner.prompt_agent(agent, version, input_text, model_name)
 
         run = AgentRun(
             agent_id=agent.id,
             version_id=version.id,
             input_prompt=version.prompt,
             output=result["response"],
+            model=model_name,
         )
 
         db.add(run)
@@ -26,13 +29,19 @@ class AgentRunner:
         }
 
     @staticmethod
-    def prompt_agent(agent, version):
+    def prompt_agent(agent, version, input_text, model_name):
+
+        system_prompt, user_prompt = PromptBuilder.build(version, input_text)
+
+        llm = LLMRegistry.get_provider(model_name)
+
+        output = llm.generate(system_prompt, user_prompt)
 
         return {
             "agent_id": str(agent.id),
             "version": version.version,
             "prompt_used": version.prompt,
-            "response": f"[MOCK RESPONSE] executed prompt: {version.prompt}",
+            "response": output,  # f"[MOCK RESPONSE] executed prompt: {version.prompt}",
         }
 
     @staticmethod

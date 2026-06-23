@@ -75,7 +75,12 @@ def activate_agent_version(
 
 
 @router.post("/{agent_id}/run")
-def run_agent(agent_id: UUID, db: Session = Depends(get_db)):
+def run_agent(
+    agent_id: UUID,
+    input_text: str,
+    model_name: str = "tinyllama",
+    db: Session = Depends(get_db),
+):
 
     agent = AgentService.get_agent(db, agent_id)
 
@@ -90,7 +95,7 @@ def run_agent(agent_id: UUID, db: Session = Depends(get_db)):
     if not version:
         raise HTTPException(status_code=404, detail="Active version missing")
 
-    return AgentRunner.run(db, agent, version)
+    return AgentRunner.run(db, agent, version, input_text, model_name)
 
 
 @router.get("/{agent_id}/runs")

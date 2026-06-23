@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, Text
+from sqlalchemy import DateTime, ForeignKey, Text, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base
@@ -23,3 +23,9 @@ class AgentRun(Base):
     output: Mapped[str] = mapped_column(Text, nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    model: Mapped[str] = mapped_column(
+        String(100),
+        nullable=False,
+        default="tinyllama",
+    )
