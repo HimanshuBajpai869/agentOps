@@ -42,3 +42,9 @@ class AgentVersionService:
     @staticmethod
     def list_versions(db: Session, agent_id):
         return db.query(AgentVersion).filter(AgentVersion.agent_id == agent_id).all()
+
+    @staticmethod
+    def get_agent_version(db, agent_version_id):
+        return (
+            db.query(AgentVersion).filter(AgentVersion.id == agent_version_id).first()
+        )
