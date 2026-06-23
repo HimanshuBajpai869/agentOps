@@ -62,13 +62,13 @@ POST /rollback – Roll back to a previous version
 
 ## Tech Stack
 
-Backend: FastAPI
-Language: Python 3.12
-Database: PostgreSQL 16
-ORM: SQLAlchemy 2.0
-Migrations: Alembic
-Package Manager: uv
-Deployment: Docker Compose (initially)
+- Backend: FastAPI
+- Language: Python 3.11
+- Database: PostgreSQL 16
+- ORM: SQLAlchemy 2.0
+- Migrations: Alembic
+- Package Manager: uv
+- Deployment: Docker Compose (initially)
 
 ## Helpful Commands (TBD)
 uv run python -m app.init_db
