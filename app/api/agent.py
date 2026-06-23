@@ -91,3 +91,21 @@ def run_agent(agent_id: UUID, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Active version missing")
 
     return AgentRunner.run(db, agent, version)
+
+
+@router.get("/{agent_id}/runs")
+def get_runs(
+    agent_id: UUID,
+    version_id: UUID | None = None,
+    limit: int = 20,
+    offset: int = 0,
+    db: Session = Depends(get_db),
+):
+
+    return AgentRunner.list_runs(
+        db=db,
+        agent_id=agent_id,
+        version_id=version_id,
+        limit=limit,
+        offset=offset,
+    )

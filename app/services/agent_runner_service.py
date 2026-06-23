@@ -34,3 +34,20 @@ class AgentRunner:
             "prompt_used": version.prompt,
             "response": f"[MOCK RESPONSE] executed prompt: {version.prompt}",
         }
+
+    @staticmethod
+    def list_runs(
+        db,
+        agent_id,
+        version_id=None,
+        limit: int = 20,
+        offset: int = 0,
+    ):
+        query = db.query(AgentRun).filter(AgentRun.agent_id == agent_id)
+
+        if version_id:
+            query = query.filter(AgentRun.version_id == version_id)
+
+        return (
+            query.order_by(AgentRun.created_at.desc()).offset(offset).limit(limit).all()
+        )
