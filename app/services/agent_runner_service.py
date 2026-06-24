@@ -12,7 +12,7 @@ class AgentRunner:
         run = AgentRun(
             agent_id=agent.id,
             version_id=version.id,
-            input_prompt=version.prompt,
+            input_prompt=input_text,
             output=result["response"],
             model=model_name,
         )
