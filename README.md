@@ -73,13 +73,87 @@ POST /rollback – Roll back to a previous version
 - Package Manager: uv
 - Deployment: Docker Compose (initially)
 
-## Helpful Commands (TBD)
-uv run python -m app.init_db
+### Pre-requisites
 
+1. Install colima following the doc - https://colima.run/docs/installation/
+~~~
+brew install colima
+~~~
+
+2. Start Colima
+
+~~~
+colima start
+~~~
+
+### Setup Infrastructure
+
+1. Start Services needed for the app using docker compose
+
+~~~
+docker compose up -d
+~~~
+
+2. Verify if infrastructure needed is up
+
+~~~
 docker ps
+~~~
+
+You should see the details of container. These can be used to connect with the container for debugging like below
+
+~~~
 docker exec -it 439f659d282f psql -U agentOps
 DROP TABLE IF EXISTS agent_versions CASCADE;
 DROP TABLE IF EXISTS agents CASCADE;
+~~~
 
+### Run Application
+
+Note - We are using uv for dependencies management. You can also activate a uv environment to run the next set of commands
+
+1. Setup Tables in Postgres-
+
+~~~
+uv run python -m app.init_db
+~~~
+
+Swagger UI with the documentation will be available - http://localhost:8000/docs 
+
+2. Start the API Server using unicorn
+
+~~~
+uv run uvicorn app.main:app --reload
+~~~
+
+3. Setup Open Source LLM using Ollama
+
+~~~
+brew install ollama
+~~~
+
+~~~
+ollama serve
+~~~
+
+~~~
+ollama pull tinyllama
+~~~
+
+4. Spin up UI for the Application
+
+- Install Node JS
+
+~~~
+brew install node
+~~~
+
+- Spin Up UI with below command -
+
+~~~
+npm run dev
+~~~
+
+## Helpful Commands 
 lsof -i :8000
 kill -9 21474

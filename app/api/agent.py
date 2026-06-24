@@ -114,3 +114,14 @@ def get_runs(
         limit=limit,
         offset=offset,
     )
+
+
+@router.get(
+    "/{agent_id}",
+    response_model=AgentResponse,
+)
+def get_agent(
+    agent_id: UUID,
+    db: Session = Depends(get_db),
+):
+    return AgentService.get_agent(db, agent_id)
