@@ -14,3 +14,5 @@ class AgentResponse(BaseModel):
     description: str | None
     owner: str
     active_version_id: UUID | None = None
+
+    model_config = {"from_attributes": True}

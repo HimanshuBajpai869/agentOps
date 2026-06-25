@@ -4,6 +4,7 @@ from app.db.database import engine
 import app.models.agent
 import app.models.agent_version
 import app.models.agent_run
+import app.models.span
 
 Base.metadata.create_all(bind=engine)
 
