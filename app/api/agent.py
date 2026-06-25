@@ -6,12 +6,13 @@ from fastapi import HTTPException
 
 from sqlalchemy.orm import Session
 
-from app.db.session import get_db
+from app.db.session import get_db, get_timeline_service, get_tracer_service
 
 from app.schemas.agent import (
     AgentCreate,
     AgentResponse,
 )
+from app.schemas.observability import RunResponse, TimelineResponse
 
 from app.services.agent_service import (
     AgentService,
@@ -21,6 +22,8 @@ from app.services.agent_version_service import AgentVersionService
 
 from app.models.agent_version import AgentVersion
 from app.services.agent_runner_service import AgentRunner
+from app.services.tracer_service import TracerService
+from app.services.timeline_service import TimelineService
 
 router = APIRouter(
     prefix="/agents",
@@ -80,6 +83,7 @@ def run_agent(
     input_text: str,
     model_name: str = "tinyllama",
     db: Session = Depends(get_db),
+    tracer: TracerService = Depends(get_tracer_service),
 ):
 
     agent = AgentService.get_agent(db, agent_id)
@@ -95,10 +99,13 @@ def run_agent(
     if not version:
         raise HTTPException(status_code=404, detail="Active version missing")
 
-    return AgentRunner.run(db, agent, version, input_text, model_name)
+    try:
+        return AgentRunner.run(tracer, agent, version, input_text, model_name)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/{agent_id}/runs")
+@router.get("/{agent_id}/runs", response_model=list[RunResponse])
 def get_runs(
     agent_id: UUID,
     version_id: UUID | None = None,
@@ -114,6 +121,21 @@ def get_runs(
         limit=limit,
         offset=offset,
     )
+
+
+@router.get(
+    "/{agent_id}/runs/{run_id}/timeline",
+    response_model=TimelineResponse,
+)
+def get_run_timeline(
+    agent_id: UUID,
+    run_id: UUID,
+    timeline_service: TimelineService = Depends(get_timeline_service),
+):
+    try:
+        return timeline_service.get_timeline(agent_id=agent_id, run_id=run_id)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 
 @router.get(
