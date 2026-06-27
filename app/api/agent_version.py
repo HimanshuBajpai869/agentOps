@@ -35,6 +35,23 @@ def create_version(
         raise HTTPException(status_code=409, detail=str(e))
 
 
+@router.get(
+    "/{agent_version_id}",
+    response_model=AgentVersionResponse,
+)
+def get_version(
+    agent_id: UUID,
+    agent_version_id: UUID,
+    db: Session = Depends(get_db),
+):
+    version = AgentVersionService.get_agent_version(db, agent_id, agent_version_id)
+    if not version:
+        raise HTTPException(
+            status_code=404, detail=f"Agent version {agent_version_id} not found"
+        )
+    return version
+
+
 @router.get("", response_model=list[AgentVersionResponse])
 def list_versions(
     agent_id: UUID,
