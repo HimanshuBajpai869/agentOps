@@ -8,6 +8,8 @@ from app.schemas.agent_version import (
     AgentVersionResponse,
 )
 from app.services.agent_version_service import AgentVersionService
+from app.schemas.tool import ToolResponse
+from app.services.tool_service import ToolService
 
 router = APIRouter(
     prefix="/agents/{agent_id}/versions",
@@ -39,3 +41,37 @@ def list_versions(
     db: Session = Depends(get_db),
 ):
     return AgentVersionService.list_versions(db, agent_id)
+
+
+@router.post(
+    "/{version_id}/tools/{tool_id}",
+    response_model=list[ToolResponse],
+)
+def attach_tool(
+    version_id: UUID,
+    tool_id: UUID,
+    db: Session = Depends(get_db),
+):
+
+    version = ToolService.attach_tool(
+        db,
+        version_id,
+        tool_id,
+    )
+
+    return version.tools
+
+
+@router.get(
+    "/{version_id}/tools",
+    response_model=list[ToolResponse],
+)
+def list_tools(
+    version_id: UUID,
+    db: Session = Depends(get_db),
+):
+
+    return ToolService.list_version_tools(
+        db,
+        version_id,
+    )

@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.agent import router as agent_router
 from app.api.agent_version import router as version_router
+from app.api.tool import router as tool_router
 
 app = FastAPI(title="AgentOps")
 
@@ -18,3 +19,4 @@ app.add_middleware(
 
 app.include_router(agent_router)
 app.include_router(version_router)
+app.include_router(tool_router)
