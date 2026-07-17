@@ -5,6 +5,7 @@ import app.models.agent
 import app.models.agent_version
 import app.models.agent_run
 import app.models.span
+import app.models.tool
 
 Base.metadata.create_all(bind=engine)
 

@@ -3,7 +3,7 @@ from datetime import datetime
 
 from sqlalchemy import String, ForeignKey, DateTime, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
+from app.models.association_tables import agent_version_tools
 from app.db.base import Base
 
 
@@ -42,4 +42,10 @@ class AgentVersion(Base):
         "Agent",
         back_populates="versions",
         foreign_keys=[agent_id],
+    )
+
+    tools = relationship(
+        "Tool",
+        secondary=agent_version_tools,
+        back_populates="versions",
     )

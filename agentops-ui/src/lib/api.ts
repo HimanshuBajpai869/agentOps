@@ -164,3 +164,16 @@ export async function runAgent(
 
   return res.json();
 }
+
+export async function getAgentVersion(
+  agentId: string,
+  agentVersionId: string
+) {
+  const res = await fetch(`${BASE_URL}/agents/${agentId}/versions/${agentVersionId}`);
+
+  if (!res.ok) {
+    throw new Error(`Failed to get version details: ${res.status}`);
+  }
+
+  return res.json();
+}

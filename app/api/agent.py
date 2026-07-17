@@ -94,7 +94,9 @@ def run_agent(
     if not agent.active_version_id:
         raise HTTPException(status_code=400, detail="No active version set")
 
-    version = AgentVersionService.get_agent_version(db, agent.active_version_id)
+    version = AgentVersionService.get_agent_version(
+        db, agent_id, agent.active_version_id
+    )
 
     if not version:
         raise HTTPException(status_code=404, detail="Active version missing")

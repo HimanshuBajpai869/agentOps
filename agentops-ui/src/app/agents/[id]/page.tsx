@@ -6,6 +6,7 @@ import {
   activateVersion,
   createVersion,
   getAgent,
+  getAgentVersion,
   getRuns,
   getTimeline,
   runAgent,
@@ -29,6 +30,7 @@ export default function AgentDetail() {
   const [running, setRunning] = useState(false);
   const [versionName, setVersionName] = useState("");
   const [versionPrompt, setVersionPrompt] = useState("");
+  const [activeVersion, setActiveVersion] = useState<any>(null);
 
   useEffect(() => {
     async function loadData() {
@@ -39,6 +41,17 @@ export default function AgentDetail() {
         setAgent(agentData);
         setRuns(runsData);
         setSelectedRunId(runsData[0]?.id ?? null);
+
+        // fetch active version if exists
+        if (agentData.active_version_id) {
+          const versionData = await getAgentVersion(
+            agentId,
+            agentData.active_version_id
+          );
+          setActiveVersion(versionData);
+        } else {
+          setActiveVersion(null);
+        }
       } catch (err) {
         console.error(err);
         setError("Failed to load agent");
@@ -138,6 +151,23 @@ export default function AgentDetail() {
             <span className="font-semibold">Active Version:</span>{" "}
             {agent.active_version_id ?? "Not Activated"}
           </div>
+
+          {activeVersion && (
+            <div className="mt-2 text-sm text-gray-600 space-y-2">
+              <div>
+                <span className="font-semibold">Version Name:</span>{" "}
+                {activeVersion.version}
+              </div>
+
+              <div>
+                <span className="font-semibold">Prompt:</span>
+              </div>
+
+              <div className="whitespace-pre-wrap bg-gray-50 p-2 rounded">
+                {activeVersion.prompt || "No prompt"}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
